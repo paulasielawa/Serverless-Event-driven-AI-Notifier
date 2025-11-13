@@ -43,6 +43,6 @@ terraform.rc
 __pycache__/
 *.pyc
 
-# Ignore sandbox environment files
+# Ignore sandbox environment catalog
 sandbox/
 

@@ -3,7 +3,6 @@ import boto3, json, os, re
 bedrock_client = boto3.client('bedrock-runtime', region_name=os.environ['BEDROCK_REGION'])
 sns = boto3.client("sns")
 
-
 def parse_json_from_text(text):
     cleaned = re.sub(r"```[\w-]*\n", "", text)
     cleaned = cleaned.replace("```", "").strip()
@@ -18,26 +17,41 @@ def parse_json_from_text(text):
 
 def classify_event(event):
     prompt = f"""
-    You are an AWS event analyst.
-    Analyze the following AWS EventBridge event and classify it into one of:
-    - "security": relates to IAM, policies, unauthorized access, keys, permissions
-    - "cost": relates to starting/stopping/terminating instances, data transfers
-    - "infra": other infrastructure operations
+    You are an expert AWS EventBridge analyst. Your task is to classify the event below into exactly one of these categories.
 
-    Return your response as **valid JSON** with the following structure:
+    ### Categories and rules
+
+    1. **security**
+    - Use this if the event deals with *access control*, *authentication*, *authorization*, or *key and policy management*.
+    - Typical eventSources: iam.amazonaws.com, sts.amazonaws.com, kms.amazonaws.com.
+    - Typical eventNames: CreateUser, DeleteUser, AttachUserPolicy, CreateAccessKey.
+    - If an event could fit multiple categories, prefer "security".
+
+    2. **cost**
+    - Use this if the event **directly changes AWS billing or compute/storage usage**.
+    - Examples: EC2 RunInstances, StopInstances, TerminateInstances, RDS CreateDBInstance, S3 CreateBucket, or scaling operations.
+    - Only classify as "cost" if there is a clear start/stop/create/delete of a paid resource.
+    - DO NOT classify simple log or metadata operations as cost.
+
+    3. **infra**
+    - Use this for infrastructure-level or operational events that **don’t affect billing directly** and **aren’t related to IAM or access**.
+    - Examples: CreateLogStream, PutMetricData, CreateLoadBalancer, CreateSubnet, ModifyInstanceAttribute.
+    - This is the default for events about configuration, networking, or monitoring.
+
+    ### Decision priority
+    If an event fits multiple categories:
+    security > cost > infra
+
+    ### Output format
+    Return valid JSON in the exact format below:
     {{
-      "category": "<one of: security|cost|infra>",
-      "confidence": "<0-1 float>",
-      "reason": "<short explanation why you categorized it>"
+    "category": "<one of: security|cost|infra>",
+    "confidence": <float between 0 and 1>,
+    "reason": "<brief explanation>"
     }}
 
-    Example events:
-    {{"eventName": "RunInstances"}} → category: "cost"
-    {{"eventName": "CreateUser"}} → category: "security"
-    {{"eventName": "CreateBucket"}} → category: "infra"
-
-    Event JSON:
-    {json.dumps(event)}
+    Now analyze the event:
+    {json.dumps(event, indent=2)}
     """
     
     response = bedrock_client.invoke_model(
