@@ -35,3 +35,14 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
+
+# Ignore zip files containing modules or provider plugins
+*.zip
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore sandbox environment files
+sandbox/
+
