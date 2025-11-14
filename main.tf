@@ -53,6 +53,7 @@ resource "aws_lambda_function" "ai_notifier" {
     handler       = "handler.lambda_handler"
     runtime       = "python3.12"
     timeout       = var.timeout_in_seconds 
+    memory_size   = var.memory_size_in_mb
     filename      = data.archive_file.lambda_zip.output_path
     source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 
@@ -165,4 +166,23 @@ resource "aws_iam_policy" "lambda_bedrock_policy" {
 resource "aws_iam_role_policy_attachment" "lambda_bedrock_attach" {
     role       = aws_iam_role.lambda_iam_role.name
     policy_arn = aws_iam_policy.lambda_bedrock_policy.arn
+}
+
+/*
+    Subscription endpoints to SNS topics
+*/
+resource "aws_sns_topic_subscription" "notifications" {
+    for_each = {
+        for category, subs in var.subscriptions : category => subs
+    }
+
+    topic_arn = lookup({
+        security = aws_sns_topic.security_alerts.arn,
+        cost     = aws_sns_topic.cost_optimization.arn,
+        infra    = aws_sns_topic.infra_events.arn
+    }, each.key)
+
+    protocol = each.value.protocol
+    endpoint = each.value.endpoint
+  
 }

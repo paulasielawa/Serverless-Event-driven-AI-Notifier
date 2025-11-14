@@ -7,6 +7,7 @@ variable "event_pattern" {
 variable "tags" {
   description = "Tags to be applied to AWS resources"
   type        = map(string)
+  default     = {}
 }
 
 variable "function_name" {
@@ -26,3 +27,27 @@ variable "bedrock_region" {
   type        = string
 }
 
+variable "timeout_in_seconds" {
+    description = "Timeout for the Lambda function in seconds"
+    type        = number
+    default     = 30
+}
+
+variable "subscriptions" {
+  description = "List of notification endpoints (protocol + endpoint) for SNS topics."
+  type        = map(list(object({
+    protocol = string
+    endpoint = string
+  })))
+  default = {
+    security = []
+    cost     = []
+    infra    = []
+  }
+}
+
+variable "memory_size_in_mb" {
+  description = "Memory size for the Lambda function in MB"
+  type        = number
+  default     = 128
+}
