@@ -52,6 +52,7 @@ resource "aws_lambda_function" "ai_notifier" {
 
     handler       = "handler.lambda_handler"
     runtime       = "python3.12"
+    timeout       = var.timeout_in_seconds 
     filename      = data.archive_file.lambda_zip.output_path
     source_code_hash = data.archive_file.lambda_zip.output_base64sha256
 

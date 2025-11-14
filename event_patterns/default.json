@@ -2,28 +2,10 @@
   "source": [
     "aws.ec2",
     "aws.iam",
-    "aws.s3"
-  ],
-  "detail-type": [
-    "AWS API Call via CloudTrail"
-  ],
-  "detail": {
-    "eventSource": [
-      "ec2.amazonaws.com",
-      "iam.amazonaws.com",
-      "s3.amazonaws.com"
-    ],
-    "eventName": [
-      "RunInstances",
-      "StopInstances",
-      "TerminateInstances",
-      "CreateUser",
-      "AttachUserPolicy",
-      "PutRolePolicy",
-      "DeleteRole",
-      "CreateBucket",
-      "PutBucketPolicy",
-      "DeleteBucket"
-    ]
-  }
+    "aws.s3",
+    "aws.guardduty",
+    "aws.securityhub",
+    "aws.cloudwatch",
+    "aws.config"
+  ]
 }

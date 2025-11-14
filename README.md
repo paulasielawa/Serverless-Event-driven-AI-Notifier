@@ -37,6 +37,7 @@ Den kombinerer **Lambda**, **EventBridge**, **SNS** og **Bedrock** for å klassi
 | `tags` | Tags for AWS-ressurser | map(string) | - |
 | `retention_in_days` | CloudWatch log retention | number | 1 |
 | `bedrock_region` | AWS region for Bedrock | string | `eu-north-1` |
+| `timeout_in_seconds` | Lambda timeout | number | 30 |
 
 ### Outputs
 
