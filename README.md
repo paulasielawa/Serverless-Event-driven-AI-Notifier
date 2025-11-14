@@ -30,14 +30,17 @@ Den kombinerer **Lambda**, **EventBridge**, **SNS** og **Bedrock** for å klassi
 
 ### Variabler
 
-| Navn | Beskrivelse | Type | Default |
-|------|-------------|------|---------|
-| `function_name` | Navn på Lambda-funksjonen | string | `ai_notifier` |
-| `event_pattern` | EventBridge JSON pattern | string | `""` |
-| `tags` | Tags for AWS-ressurser | map(string) | - |
-| `retention_in_days` | CloudWatch log retention | number | 1 |
-| `bedrock_region` | AWS region for Bedrock | string | `eu-north-1` |
-| `timeout_in_seconds` | Lambda timeout | number | 30 |
+| Navn                 | Beskrivelse                                      | Type                                                        | Default                                    |
+| -------------------- | ------------------------------------------------ | ----------------------------------------------------------- | ------------------------------------------ |
+| `function_name`      | Navn på Lambda-funksjonen                        | string                                                      | `"ai_notifier"`                            |
+| `event_pattern`      | EventBridge pattern som JSON-string              | string                                                      | `""`                                       |
+| `tags`               | Tags for AWS-ressurser                           | map(string)                                                    | `{}`         |
+| `retention_in_days`  | Antall dager CloudWatch-logger beholdes          | number                                                      | `1`                                        |
+| `bedrock_region`     | Region for Bedrock-tjenesten                     | string                                                      | `"eu-north-1"`                             |
+| `timeout_in_seconds` | Timeout for Lambda                               | number                                                      | `30`                                       |
+| `subscriptions`      | Liste over notifikasjonsendepunkter per kategori | map(list(object({ protocol = string, endpoint = string }))) | `{ security = [], cost = [], infra = [] }` |
+| `memory_size_in_mb`  | Minne i MB for Lambda                            | number                                                      | `128`                                      |
+
 
 ### Outputs
 
